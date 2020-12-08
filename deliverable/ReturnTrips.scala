@@ -13,6 +13,8 @@ object ReturnTrips {
 
     import spark.implicits._
 
+    ToDo: Add your implementation here
+
     trips
   }
 }
