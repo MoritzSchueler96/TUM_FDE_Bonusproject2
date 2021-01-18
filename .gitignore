@@ -3,3 +3,8 @@ spark-warehouse
 target
 project
 .idea
+.bsp
+.bloop
+.metals
+.vscode
+.scalafmt.conf
