@@ -18,7 +18,7 @@ object ReturnTrips {
     import spark.implicits._
     val diff_time = 28800
     val diff_dist =
-      dist * 360 / 6371000 / 3.141 // dist / 100000 * 1.25 // dist / 100000 * 1.08 // 360° = 2*pi*radius
+      dist * 360 / 6371000 / 2.5 // dist / 100000 * 1.25 // dist / 100000 * 1.08 // 360° = 2*pi*radius
 
     val trips_filtered = trips
       .select(
@@ -58,9 +58,9 @@ object ReturnTrips {
         "pickup_lon_bucket",
         explode(
           array(
-            floor($"a.pickup_longitude" / diff_dist / 2) - 1,
-            floor($"a.pickup_longitude" / diff_dist / 2),
-            floor($"a.pickup_longitude" / diff_dist / 2) + 1
+            floor($"a.pickup_longitude" / diff_dist) - 1,
+            floor($"a.pickup_longitude" / diff_dist),
+            floor($"a.pickup_longitude" / diff_dist) + 1
           )
         )
       )
@@ -82,7 +82,7 @@ object ReturnTrips {
           )
           .withColumn(
             "dropoff_lon_bucket",
-            floor($"b.dropoff_longitude" / diff_dist / 2)
+            floor($"b.dropoff_longitude" / diff_dist)
           ),
         // Bucket equi join
         $"dropoff_time_bucket" === $"pickup_time_bucket" &&
