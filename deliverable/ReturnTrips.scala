@@ -58,9 +58,9 @@ object ReturnTrips {
         "pickup_lon_bucket",
         explode(
           array(
-            floor($"a.pickup_longitude" / diff_dist) - 1,
-            floor($"a.pickup_longitude" / diff_dist),
-            floor($"a.pickup_longitude" / diff_dist) + 1
+            floor($"a.pickup_longitude" / diff_dist / 2) - 1,
+            floor($"a.pickup_longitude" / diff_dist / 2),
+            floor($"a.pickup_longitude" / diff_dist / 2) + 1
           )
         )
       )
@@ -82,7 +82,7 @@ object ReturnTrips {
           )
           .withColumn(
             "dropoff_lon_bucket",
-            floor($"b.dropoff_longitude" / diff_dist)
+            floor($"b.dropoff_longitude" / diff_dist / 2)
           ),
         // Bucket equi join
         $"dropoff_time_bucket" === $"pickup_time_bucket" &&
