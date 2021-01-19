@@ -18,7 +18,7 @@ object ReturnTrips {
     import spark.implicits._
     val diff_time = 28800
     val diff_dist =
-      dist * 9 / 1000000 // dist / 100000 * 1.1 // dist * 360 / 6371000 / 2 / 3.141 // 360° = 2*pi*radius
+      dist / 100000 * 1.2 // dist * 360 / 6371000 / 2 / 3.141 // 360° = 2*pi*radius
 
     val trips_filtered = trips
       .select(
