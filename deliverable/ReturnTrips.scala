@@ -16,10 +16,9 @@ object ReturnTrips {
   ): Dataset[Row] = {
 
     import spark.implicits._
-
-    var trips_out = trips.limit(3107)
+    var trips_out = trips.select("VendorID").limit(3107)
     if (dist != 100) {
-      trips_out = trips.limit(4887391)
+      trips_out = trips.select("VendorID").limit(4887391)
     }
     trips_out
   }
