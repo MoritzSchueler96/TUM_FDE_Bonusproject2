@@ -18,7 +18,7 @@ object ReturnTrips {
     import spark.implicits._
     val diff_time = 28800
     val diff_dist =
-      dist / 100000 * 1.1 // dist * 360 / 6371000 / 2 / 3.141 // 360° = 2*pi*radius
+      dist / 100000 * 1.25 // dist * 9/1000000// 360° = 2*pi*radius
 
     val trips_filtered = trips
       .select(
@@ -54,7 +54,7 @@ object ReturnTrips {
           )
         )
       )
-      .withColumn(
+      /*.withColumn(
         "pickup_lon_bucket",
         explode(
           array(
@@ -63,7 +63,27 @@ object ReturnTrips {
             floor($"a.pickup_longitude" / diff_dist) + 1
           )
         )
+      )*/
+      .withColumn(
+        "adropoff_lat_bucket",
+        explode(
+          array(
+            floor($"a.dropoff_latitude" / diff_dist) - 1,
+            floor($"a.dropoff_latitude" / diff_dist),
+            floor($"a.dropoff_latitude" / diff_dist) + 1
+          )
+        )
       )
+      /*.withColumn(
+        "adropoff_lon_bucket",
+        explode(
+          array(
+            floor($"a.dropoff_longitude" / diff_dist) - 1,
+            floor($"a.dropoff_longitude" / diff_dist),
+            floor($"a.dropoff_longitude" / diff_dist) + 1
+          )
+        )
+      )*/
       .join(
         trips_filtered
           .as(alias = "b")
@@ -80,14 +100,24 @@ object ReturnTrips {
             "dropoff_lat_bucket",
             floor($"b.dropoff_latitude" / diff_dist)
           )
-          .withColumn(
+          /*.withColumn(
             "dropoff_lon_bucket",
             floor($"b.dropoff_longitude" / diff_dist)
+          )*/
+          /*.withColumn(
+            "bpickup_lon_bucket",
+            floor($"b.pickup_longitude" / diff_dist)
+          )*/
+          .withColumn(
+            "bpickup_lat_bucket",
+            floor($"b.pickup_latitude" / diff_dist)
           ),
         // Bucket equi join
         $"dropoff_time_bucket" === $"pickup_time_bucket" &&
           $"pickup_lat_bucket" === $"dropoff_lat_bucket" &&
-          $"pickup_lon_bucket" === $"dropoff_lon_bucket",
+          /*$"pickup_lon_bucket" === $"dropoff_lon_bucket"&&
+          $"adropoff_lon_bucket"===$"bpickup_lon_bucket"&&*/
+          $"bpickup_lat_bucket" === $"adropoff_lat_bucket",
         "inner"
       )
       .drop(
@@ -96,7 +126,11 @@ object ReturnTrips {
         "pickup_lon_bucket",
         "pickup_time_bucket",
         "pickup_lat_bucket",
-        "pickup_lon_bucket"
+        "pickup_lon_bucket",
+        "adropoff_lon_bucket",
+        "bpickup_lon_bucket",
+        "bpickup_lat_bucket",
+        "adropoff_lat_bucket"
       )
       .filter(
         // Condition 1
