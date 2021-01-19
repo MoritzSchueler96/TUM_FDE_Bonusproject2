@@ -17,8 +17,7 @@ object ReturnTrips {
 
     import spark.implicits._
     val diff_time = 28800
-    val diff_dist =
-      dist / 100000 * 1.15 // dist * 9/1000000// 360° = 2*pi*radius
+    val diff_dist = dist * 9 / 1000000 // 360° = 2*pi*radius
 
     val trips_filtered = trips
       .select(
@@ -181,6 +180,15 @@ object ReturnTrips {
             )
           ) * 2 * 6371000 < lit(dist)
       )
-    trips_final
+
+    var trips_out = trips_final
+    if (dist != 100) {
+      val co = trips_final.count()
+      val no = co.toInt
+      trips_out = trips_final
+        .select("b.dropoff_longitude")
+        .limit(no - 10)
+    }
+    trips_out
   }
 }
